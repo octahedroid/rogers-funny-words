@@ -37,7 +37,7 @@ jobs:
           name: deploy
           # @todo make a variable for serverlessplayground and runtime, and probably everything in gcloud functions deploy.
           command: |
-            gcloud functions deploy ${TERMINUS_SITE}--${TERMINUS_ENV} --runtime=nodejs10 --trigger-http  --allow-unauthenticated  --entry-point=default --source=frontity/build --set-env-vars="TERMINUS_SITE=${TERMINUS_SITE},TERMINUS_ENV=${TERMINUS_ENV}"
+            gcloud functions deploy ${TERMINUS_SITE}--${TERMINUS_ENV} --project=${GOOGLE_PROJECT_ID} --runtime=nodejs10 --trigger-http  --allow-unauthenticated  --entry-point=default --source=frontity/build --set-env-vars="TERMINUS_SITE=${TERMINUS_SITE},TERMINUS_ENV=${TERMINUS_ENV}"
 
 orbs:
   pantheon: pantheon-systems/pantheon@0.2.0

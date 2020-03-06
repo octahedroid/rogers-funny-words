@@ -8,7 +8,7 @@ workflows:
           package_lock_location: "frontity"
           path_to_persist: "frontity/build"
           build_command: "npm run build"
-          requires:
+          #requires:
             #- pantheon/push
           pre-steps:
             - playground/setbashenv

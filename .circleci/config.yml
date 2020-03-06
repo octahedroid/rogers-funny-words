@@ -3,7 +3,7 @@ workflows:
   version: 2
   deploy:
       jobs:
-      - pantheon/push
+      # - pantheon/push
       - playground/npmbuild_and_persist:
           package_lock_location: "frontity"
           path_to_persist: "frontity/build"

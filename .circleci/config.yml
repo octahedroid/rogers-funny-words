@@ -9,7 +9,7 @@ workflows:
           path_to_persist: "frontity/build"
           build_command: "npm run build"
           requires:
-            - pantheon/push
+            #- pantheon/push
           pre-steps:
             - playground/setbashenv
       - deploy_cloud_function:

@@ -95,7 +95,7 @@ class PantheonToGCPBucket {
             $this->site,
             $this->environment,
           ],
-          $forward['url']
+          $forward['url'] . '/'
         );
 
         return;
@@ -123,7 +123,7 @@ class PantheonToGCPBucket {
 
   private function isValidPath($guzzle) {
     try {
-      $guzzle->head($this->url . $this->uri);
+      $guzzle->head(str_replace('//', '/', $this->url . $this->uri));
 
       return true;
     } catch (\Exception $e) {
@@ -161,8 +161,8 @@ class PantheonToGCPBucket {
       // Create a guzzle client
       $guzzle = new \GuzzleHttp\Client([
         'curl' => [
-          CURLOPT_TCP_KEEPALIVE => 45,
-          CURLOPT_TCP_KEEPIDLE => 45,
+          CURLOPT_TCP_KEEPALIVE => 15,
+          CURLOPT_TCP_KEEPIDLE => 15,
         ]
       ]);
 
@@ -179,10 +179,8 @@ class PantheonToGCPBucket {
 
       // Forward the request and get the response.
       $response = $proxy->forward($request)->to($this->url);
-
-      // @TODO dependency to laminas-httphandlerrunner
-      $emiter = new SapiStreamEmitter();
-      $emiter->emit($response);
+      $emitter = new SapiStreamEmitter();
+      $emitter->emit($response);
       exit();
     }
 }

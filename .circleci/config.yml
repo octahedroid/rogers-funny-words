@@ -46,19 +46,19 @@ jobs:
           name: deploy-static
           # @todo make a variable for serverlessplayground and runtime, and probably everything in gcloud functions deploy.
           command: |
-            gsutil -m rsync -r -c -d frontity/build/static gs://${GCP_BUCKET}/${TERMINUS_ENV}/static
-            gsutil -m rsync -r -c -d frontity/build/static gs://${GCP_BUCKET}/dev--${SHORT_GIT_HASH}/static
-            gsutil -m rsync -r -c -d frontity/build/static gs://${GCP_BUCKET}/test--${SHORT_GIT_HASH}/static
-            gsutil -m rsync -r -c -d frontity/build/static gs://${GCP_BUCKET}/live--${SHORT_GIT_HASH}/static
+            gsutil -m rsync -r -c -d frontity/build/static gs://${GCP_BUCKET}/${TERMINUS_ENV}/static \
+            && gsutil -m rsync -r -c -d frontity/build/static gs://${GCP_BUCKET}/dev--${SHORT_GIT_HASH}/static \
+            && gsutil -m rsync -r -c -d frontity/build/static gs://${GCP_BUCKET}/test--${SHORT_GIT_HASH}/static \
+            && gsutil -m rsync -r -c -d frontity/build/static gs://${GCP_BUCKET}/live--${SHORT_GIT_HASH}/static
       - run:
           name: deploy
           # @todo make a variable for serverlessplayground and runtime, and probably everything in gcloud functions deploy.
           command: |
             rm -rf frontity/build/static
-            gcloud functions deploy ${TERMINUS_SITE}--${TERMINUS_ENV} --project=${GOOGLE_PROJECT_ID} --runtime=nodejs10 --trigger-http  --allow-unauthenticated  --entry-point=default --source=frontity/build --set-env-vars="TERMINUS_SITE=${TERMINUS_SITE},TERMINUS_ENV=${TERMINUS_ENV}"
-            gcloud functions deploy ${TERMINUS_SITE}--${TERMINUS_ENV}--${SHORT_GIT_HASH} --project=${GOOGLE_PROJECT_ID} --runtime=nodejs10 --trigger-http  --allow-unauthenticated  --entry-point=default --source=frontity/build --set-env-vars="TERMINUS_SITE=${TERMINUS_SITE},TERMINUS_ENV=${TERMINUS_ENV}"
-            gcloud functions deploy ${TERMINUS_SITE}--test--${SHORT_GIT_HASH} --project=${GOOGLE_PROJECT_ID} --runtime=nodejs10 --trigger-http  --allow-unauthenticated  --entry-point=default --source=frontity/build --set-env-vars="TERMINUS_SITE=${TERMINUS_SITE},TERMINUS_ENV=test"
-            gcloud functions deploy ${TERMINUS_SITE}--live--${SHORT_GIT_HASH} --project=${GOOGLE_PROJECT_ID} --runtime=nodejs10 --trigger-http  --allow-unauthenticated  --entry-point=default --source=frontity/build --set-env-vars="TERMINUS_SITE=${TERMINUS_SITE},TERMINUS_ENV=live"
+            gcloud functions deploy ${TERMINUS_SITE}--${TERMINUS_ENV} --project=${GOOGLE_PROJECT_ID} --runtime=nodejs10 --trigger-http  --allow-unauthenticated  --entry-point=default --source=frontity/build --set-env-vars="TERMINUS_SITE=${TERMINUS_SITE},TERMINUS_ENV=${TERMINUS_ENV}" \
+            && gcloud functions deploy ${TERMINUS_SITE}--${TERMINUS_ENV}--${SHORT_GIT_HASH} --project=${GOOGLE_PROJECT_ID} --runtime=nodejs10 --trigger-http  --allow-unauthenticated  --entry-point=default --source=frontity/build --set-env-vars="TERMINUS_SITE=${TERMINUS_SITE},TERMINUS_ENV=${TERMINUS_ENV}" \
+            && gcloud functions deploy ${TERMINUS_SITE}--test--${SHORT_GIT_HASH} --project=${GOOGLE_PROJECT_ID} --runtime=nodejs10 --trigger-http  --allow-unauthenticated  --entry-point=default --source=frontity/build --set-env-vars="TERMINUS_SITE=${TERMINUS_SITE},TERMINUS_ENV=test" \
+            && gcloud functions deploy ${TERMINUS_SITE}--live--${SHORT_GIT_HASH} --project=${GOOGLE_PROJECT_ID} --runtime=nodejs10 --trigger-http  --allow-unauthenticated  --entry-point=default --source=frontity/build --set-env-vars="TERMINUS_SITE=${TERMINUS_SITE},TERMINUS_ENV=live"
 
   deploy_multidev_static_and_cloud_function:
     docker:

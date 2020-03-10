@@ -38,6 +38,7 @@ jobs:
           # @todo make a variable for serverlessplayground and runtime, and probably everything in gcloud functions deploy.
           command: |
             gsutil -m rsync -r -c -d frontity/build/static gs://${GCP_BUCKET}/${TERMINUS_ENV}
+            
       - run:
           name: deploy
           # @todo make a variable for serverlessplayground and runtime, and probably everything in gcloud functions deploy.

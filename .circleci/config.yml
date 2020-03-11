@@ -48,37 +48,19 @@ jobs:
       - attach_workspace:
           at: .
       - run:
-          name: Derive additional environment variables
+          name: Avoid ssh prompting when connecting to new ssh hosts
           command: mkdir -p $HOME/.ssh && echo "StrictHostKeyChecking no" >> "$HOME/.ssh/config"
       - run:
           name: Authenticate with Pantheon's CLI using a machine token
           command: terminus -n auth:login --machine-token="$TERMINUS_TOKEN"
-      - run:
-          name: Checkout site repository from Pantheon
-          command: |
-            # Ensure that there's a Pantheon repo locally. If one was not
-            # restored from cache, clone it fresh.
-            if [ ! -d "$PANTHEON_REPO_DIR/.git" ]; then
-              mkdir $PANTHEON_REPO_DIR
-              cd $PANTHEON_REPO_DIR
-              git init
-              git remote add pantheon $(terminus connection:info $TERMINUS_SITE.dev --field=git_url)
-              git remote -v
-            fi
-            git fetch pantheon 
-      - run:
-          name: cat bash-txt
-          command: |
-            cat bash_env.txt
+      
       - run:
           name: Get pantheon remote hash
           command: |
-            cd $PANTHEON_REPO_DIR
-            git ls-remote pantheon HEAD
-          # command: |
-          #   export PANTHEON_REMOTE=$(terminus connection:info $TERMINUS_SITE.dev --field=git_url)
-          #   export PANTHEON_SHA1=$(git ls-remote $PANTHEON_REMOTE HEAD | awk '{ print $1}')
-          #   echo ${PANTHEON_SHA1:0:7}
+            export PANTHEON_REMOTE=$(terminus connection:info $TERMINUS_SITE.dev --field=git_url)
+            export PANTHEON_SHA1=$(git ls-remote $PANTHEON_REMOTE HEAD | awk '{ print $1}')
+            echo "export PANTHEON_SHORT_SHA1='${PANTHEON_SHA1:0:7}'" >> bash_env.txt
+            echo ${PANTHEON_SHA1:0:7}
       # - run:
       #     name: Get pantheon remote hash
       #     command: |
@@ -86,6 +68,9 @@ jobs:
       #       export PANTHEON_SHA1=$(git ls-remote $PANTHEON_REMOTE HEAD | awk '{ print $1}')
       #       echo "export PANTHEON_SHORT_SHA1='${PANTHEON_SHA1:0:7}'" >> bash_env.txt
       #       echo ${PANTHEON_SHA1:0:7}
+      - run:
+          name: Cet env
+          command: cat bash_env.txt
       - persist_to_workspace:
           root: .
           paths:

@@ -9,28 +9,28 @@ workflows:
             - pantheon/push
           pre-steps:
             - playground/setbashenv
-      # - playground/npmbuild_and_persist:
-      #     package_lock_location: "frontity"
-      #     path_to_persist: "frontity/build"
-      #     build_command: "npm run build"
-      #     requires:
-      #       - get_pantheon_hash
-      #     pre-steps:
-      #       - playground/setbashenv
-      # - deploy_static_and_cloud_function:
-      #     requires:
-      #       - playground/npmbuild_and_persist
-      #     pre-steps:
-      #       - playground/setbashenv
-      #     filters:  # required since `deploy` has tag filters AND requires `test`
-      #       branches:
-      #         only: master
-      # - deploy_multidev_static_and_cloud_function:
-      #     requires:
-      #       - playground/npmbuild_and_persist
-      #     filters:  # required since `deploy` has tag filters AND requires `test`
-      #       branches:
-      #         ignore: master
+      - playground/npmbuild_and_persist:
+          package_lock_location: "frontity"
+          path_to_persist: "frontity/build"
+          build_command: "npm run build"
+          requires:
+            - get_pantheon_hash
+          pre-steps:
+            - playground/setbashenv
+      - deploy_static_and_cloud_function:
+          requires:
+            - playground/npmbuild_and_persist
+          pre-steps:
+            - playground/setbashenv
+          filters:  # required since `deploy` has tag filters AND requires `test`
+            branches:
+              only: master
+      - deploy_multidev_static_and_cloud_function:
+          requires:
+            - playground/npmbuild_and_persist
+          filters:  # required since `deploy` has tag filters AND requires `test`
+            branches:
+              ignore: master
 
 jobs:
   get_pantheon_hash:
@@ -60,17 +60,6 @@ jobs:
             export PANTHEON_REMOTE=$(terminus connection:info $TERMINUS_SITE.dev --field=git_url)
             export PANTHEON_SHA1=$(git ls-remote $PANTHEON_REMOTE HEAD | awk '{ print $1}')
             echo "export PANTHEON_SHORT_SHA1='${PANTHEON_SHA1:0:7}'" >> bash_env.txt
-            echo ${PANTHEON_SHA1:0:7}
-      # - run:
-      #     name: Get pantheon remote hash
-      #     command: |
-      #       export PANTHEON_REMOTE=$(terminus connection:info $TERMINUS_SITE.dev --field=git_url)
-      #       export PANTHEON_SHA1=$(git ls-remote $PANTHEON_REMOTE HEAD | awk '{ print $1}')
-      #       echo "export PANTHEON_SHORT_SHA1='${PANTHEON_SHA1:0:7}'" >> bash_env.txt
-      #       echo ${PANTHEON_SHA1:0:7}
-      - run:
-          name: Cet env
-          command: cat bash_env.txt
       - persist_to_workspace:
           root: .
           paths:

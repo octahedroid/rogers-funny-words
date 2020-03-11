@@ -36,6 +36,13 @@ jobs:
   get_pantheon_hash:
     docker:
       - image: quay.io/pantheon-public/build-tools-ci:5.x
+    working_directory: ~/sitedir
+    environment:
+      TZ: "/usr/share/zoneinfo/America/Los_Angeles"
+      # @todo, remove this variable https://github.com/pantheon-systems/circleci-orb/issues/7
+      BUILD_TOOLS_VERSION: dev-option-for-no-force
+      TERM: dumb
+      PANTHEON_REPO_DIR: "/tmp/pantheon_repo"
     
     steps:
       - attach_workspace:
@@ -44,14 +51,27 @@ jobs:
           name: Authenticate with Pantheon's CLI using a machine token
           command: terminus -n auth:login --machine-token="$TERMINUS_TOKEN"
       - run:
+          name: Checkout site repository from Pantheon
+          command: |
+            # Ensure that there's a Pantheon repo locally. If one was not
+            # restored from cache, clone it fresh.
+            if [ ! -d "$PANTHEON_REPO_DIR/.git" ]; then
+              mkdir $PANTHEON_REPO_DIR
+              cd $PANTHEON_REPO_DIR
+              git init
+              git remote add pantheon $(terminus connection:info $TERMINUS_SITE.dev --field=git_url)
+              git remote -v
+            fi
+            git fetch pantheon 
+      - run:
           name: cat bash-txt
           command: |
             cat bash_env.txt
       - run:
           name: Get pantheon remote hash
           command: |
-            terminus connection:info $TERMINUS_SITE.dev --field=git_url
-            git ls-remote $(terminus connection:info $TERMINUS_SITE.dev --field=git_url) HEAD | awk '{ print $1}'
+            cd $PANTHEON_REPO_DIR
+            git ls-remote pantheon HEAD
           # command: |
           #   export PANTHEON_REMOTE=$(terminus connection:info $TERMINUS_SITE.dev --field=git_url)
           #   export PANTHEON_SHA1=$(git ls-remote $PANTHEON_REMOTE HEAD | awk '{ print $1}')

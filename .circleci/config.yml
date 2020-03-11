@@ -50,9 +50,12 @@ jobs:
       - run:
           name: Get pantheon remote hash
           command: |
-            export PANTHEON_REMOTE=$(terminus connection:info $TERMINUS_SITE.dev --field=git_url)
-            export PANTHEON_SHA1=$(git ls-remote $PANTHEON_REMOTE HEAD | awk '{ print $1}')
-            echo ${PANTHEON_SHA1:0:7}
+            terminus connection:info $TERMINUS_SITE.dev --field=git_url
+            git ls-remote $(terminus connection:info $TERMINUS_SITE.dev --field=git_url) HEAD | awk '{ print $1}'
+          # command: |
+          #   export PANTHEON_REMOTE=$(terminus connection:info $TERMINUS_SITE.dev --field=git_url)
+          #   export PANTHEON_SHA1=$(git ls-remote $PANTHEON_REMOTE HEAD | awk '{ print $1}')
+          #   echo ${PANTHEON_SHA1:0:7}
       # - run:
       #     name: Get pantheon remote hash
       #     command: |

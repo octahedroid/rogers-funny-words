@@ -29,8 +29,6 @@ jobs:
   deploy_static_and_cloud_function:
     docker:
       - image: google/cloud-sdk
-    environment:
-      SHORT_GIT_HASH: $(echo $CIRCLE_SHA1 | cut -c -7)
     steps:
       - checkout
       - attach_workspace:
@@ -46,18 +44,18 @@ jobs:
           name: deploy-static
           # @todo make a variable for serverlessplayground and runtime, and probably everything in gcloud functions deploy.
           command: |
-            echo $SHORT_GIT_HASH
+            echo ${CIRCLE_SHA1:0:7}
             gsutil -m rsync -r -c -d frontity/build/static gs://${GCP_BUCKET}/${TERMINUS_ENV}/static
-            gsutil -m rsync -r -c -d frontity/build/static gs://${GCP_BUCKET}/dev--${SHORT_GIT_HASH}/static
+            gsutil -m rsync -r -c -d frontity/build/static gs://${GCP_BUCKET}/dev--${CIRCLE_SHA1:0:7}/static
            
       - run:
           name: deploy-static
           # @todo make a variable for serverlessplayground and runtime, and probably everything in gcloud functions deploy.
           command: |
             gsutil -m rsync -r -c -d frontity/build/static gs://${GCP_BUCKET}/${TERMINUS_ENV}/static
-            gsutil -m rsync -r -c -d frontity/build/static gs://${GCP_BUCKET}/dev--${SHORT_GIT_HASH}/static
-            gsutil -m rsync -r -c -d frontity/build/static gs://${GCP_BUCKET}/live--${SHORT_GIT_HASH}/static
-            gsutil -m rsync -r -c -d frontity/build/static gs://${GCP_BUCKET}/test--${SHORT_GIT_HASH}/static
+            gsutil -m rsync -r -c -d frontity/build/static gs://${GCP_BUCKET}/dev--${CIRCLE_SHA1:0:7}/static
+            gsutil -m rsync -r -c -d frontity/build/static gs://${GCP_BUCKET}/live--${CIRCLE_SHA1:0:7}/static
+            gsutil -m rsync -r -c -d frontity/build/static gs://${GCP_BUCKET}/test--${CIRCLE_SHA1:0:7}/static
       - run:
           name: deploy
           # @todo make a variable for serverlessplayground and runtime, and probably everything in gcloud functions deploy.

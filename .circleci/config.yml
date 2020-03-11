@@ -49,7 +49,7 @@ jobs:
           at: .
       - run:
           name: Derive additional environment variables
-          command: mkdir -p $HOME/.ssh && echo "StrictHostKeyChecking no" >> "$HOME/.ssh/config
+          command: mkdir -p $HOME/.ssh && echo "StrictHostKeyChecking no" >> "$HOME/.ssh/config"
       - run:
           name: Authenticate with Pantheon's CLI using a machine token
           command: terminus -n auth:login --machine-token="$TERMINUS_TOKEN"

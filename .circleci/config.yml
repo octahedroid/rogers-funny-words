@@ -4,13 +4,17 @@ workflows:
   deploy:
       jobs:
       - pantheon/push
-      - get_pantheon_hash
+      - get_pantheon_hash:
+          requires:
+            - pantheon/push
+          pre-steps:
+            - playground/setbashenv
       - playground/npmbuild_and_persist:
           package_lock_location: "frontity"
           path_to_persist: "frontity/build"
           build_command: "npm run build"
           requires:
-            - pantheon/push
+            - get_pantheon_hash
           pre-steps:
             - playground/setbashenv
       - deploy_static_and_cloud_function:

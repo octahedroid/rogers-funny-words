@@ -59,10 +59,10 @@ jobs:
           name: deploy-static
           # @todo make a variable for serverlessplayground and runtime, and probably everything in gcloud functions deploy.
           command: |
-            gsutil -m rsync -r -c -d frontity/build/static gs://${GCP_BUCKET}/${TERMINUS_ENV}/static
-            gsutil -m rsync -r -c -d frontity/build/static gs://${GCP_BUCKET}/dev--${PANTHEON_SHORT_SHA1}/static
-            gsutil -m rsync -r -c -d frontity/build/static gs://${GCP_BUCKET}/live--${PANTHEON_SHORT_SHA1}/static
-            gsutil -m rsync -r -c -d frontity/build/static gs://${GCP_BUCKET}/test--${PANTHEON_SHORT_SHA1}/static
+            gsutil -m rsync -r -c -d frontity/build/static gs://${GCP_BUCKET}/${TERMINUS_SITE}--${TERMINUS_ENV}/static
+            gsutil -m rsync -r -c -d frontity/build/static gs://${GCP_BUCKET}/${TERMINUS_SITE}--dev--${PANTHEON_SHORT_SHA1}/static
+            gsutil -m rsync -r -c -d frontity/build/static gs://${GCP_BUCKET}/${TERMINUS_SITE}--live--${PANTHEON_SHORT_SHA1}/static
+            gsutil -m rsync -r -c -d frontity/build/static gs://${GCP_BUCKET}/${TERMINUS_SITE}--test--${PANTHEON_SHORT_SHA1}/static
       - run:
           name: deploy
           # @todo make a variable for serverlessplayground and runtime, and probably everything in gcloud functions deploy.
@@ -91,7 +91,7 @@ jobs:
           name: deploy-static
           # @todo make a variable for serverlessplayground and runtime, and probably everything in gcloud functions deploy.
           command: |
-            gsutil -m rsync -r -c -d frontity/build/static gs://${GCP_BUCKET}/${TERMINUS_ENV}/static      
+            gsutil -m rsync -r -c -d frontity/build/static gs://${GCP_BUCKET}/${TERMINUS_SITE}--${TERMINUS_ENV}/static      
       - run:
           name: deploy
           # @todo make a variable for serverlessplayground and runtime, and probably everything in gcloud functions deploy.

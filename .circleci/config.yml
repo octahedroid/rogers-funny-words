@@ -5,7 +5,11 @@ workflows:
     jobs:
       - pantheon/push:
           post-steps:
-            - run: echo "hello"
+            - run: |
+                export PANTHEON_REMOTE=$(terminus connection:info $TERMINUS_SITE.dev --field=git_url)
+                export PANTHEON_SHA1=$(git ls-remote $PANTHEON_REMOTE HEAD | awk '{ print $1}')
+                echo "export PANTHEON_SHORT_SHA1='${PANTHEON_SHA1:0:7}'" >> bash_env.txt
+            
             # - run:
             #   name: Get pantheon remote hash
             #   command: |

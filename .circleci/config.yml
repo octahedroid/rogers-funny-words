@@ -5,21 +5,13 @@ workflows:
     jobs:
       - pantheon/push:
           post-steps:
-            - run:
-              name: Get pantheon remote hash
-              command: |
-                export PANTHEON_REMOTE=$(terminus connection:info $TERMINUS_SITE.dev --field=git_url)
-                export PANTHEON_SHA1=$(git ls-remote $PANTHEON_REMOTE HEAD | awk '{ print $1}')
-                echo "export PANTHEON_SHORT_SHA1='${PANTHEON_SHA1:0:7}'" >> bash_env.txt
-            # - persist_to_workspace:
-            #   root: .
-            #   paths:
-            #     - bash_env.txt
-      # - get_pantheon_hash:
-      #     requires:
-      #       - pantheon/push
-      #     pre-steps:
-      #       - playground/setbashenv
+            - get_pantheon_hash
+            # - run:
+            #   name: Get pantheon remote hash
+            #   command: |
+            #     export PANTHEON_REMOTE=$(terminus connection:info $TERMINUS_SITE.dev --field=git_url)
+            #     export PANTHEON_SHA1=$(git ls-remote $PANTHEON_REMOTE HEAD | awk '{ print $1}')
+            #     echo "export PANTHEON_SHORT_SHA1='${PANTHEON_SHA1:0:7}'" >> bash_env.txt
       - playground/npmbuild_and_persist:
           package_lock_location: "frontity"
           path_to_persist: "frontity/build"
@@ -44,37 +36,29 @@ workflows:
               ignore: master
 
 jobs:
-  # get_pantheon_hash:
-  #   docker:
-  #     - image: quay.io/pantheon-public/build-tools-ci:5.x
-  #   working_directory: ~/sitedir
-  #   environment:
-  #     TZ: "/usr/share/zoneinfo/America/Los_Angeles"
-  #     # @todo, remove this variable https://github.com/pantheon-systems/circleci-orb/issues/7
-  #     BUILD_TOOLS_VERSION: dev-option-for-no-force
-  #     TERM: dumb
-  #     PANTHEON_REPO_DIR: "/tmp/pantheon_repo"
-    
-  #   steps:
-  #     - attach_workspace:
-  #         at: .
-  #     - run:
-  #         name: Avoid ssh prompting when connecting to new ssh hosts
-  #         command: mkdir -p $HOME/.ssh && echo "StrictHostKeyChecking no" >> "$HOME/.ssh/config"
-  #     - run:
-  #         name: Authenticate with Pantheon's CLI using a machine token
-  #         command: terminus -n auth:login --machine-token="$TERMINUS_TOKEN"
+  get_pantheon_hash:
+    docker:
+      - image: quay.io/pantheon-public/build-tools-ci:5.x
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Avoid ssh prompting when connecting to new ssh hosts
+          command: mkdir -p $HOME/.ssh && echo "StrictHostKeyChecking no" >> "$HOME/.ssh/config"
+      - run:
+          name: Authenticate with Pantheon's CLI using a machine token
+          command: terminus -n auth:login --machine-token="$TERMINUS_TOKEN"
       
-  #     - run:
-  #         name: Get pantheon remote hash
-  #         command: |
-  #           export PANTHEON_REMOTE=$(terminus connection:info $TERMINUS_SITE.dev --field=git_url)
-  #           export PANTHEON_SHA1=$(git ls-remote $PANTHEON_REMOTE HEAD | awk '{ print $1}')
-  #           echo "export PANTHEON_SHORT_SHA1='${PANTHEON_SHA1:0:7}'" >> bash_env.txt
-  #     - persist_to_workspace:
-  #         root: .
-  #         paths:
-  #           - bash_env.txt
+      - run:
+          name: Get pantheon remote hash
+          command: |
+            export PANTHEON_REMOTE=$(terminus connection:info $TERMINUS_SITE.dev --field=git_url)
+            export PANTHEON_SHA1=$(git ls-remote $PANTHEON_REMOTE HEAD | awk '{ print $1}')
+            echo "export PANTHEON_SHORT_SHA1='${PANTHEON_SHA1:0:7}'" >> bash_env.txt
+      - persist_to_workspace:
+          root: .
+          paths:
+            - bash_env.txt
 
   deploy_static_and_cloud_function:
     docker:

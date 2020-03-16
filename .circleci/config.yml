@@ -2,7 +2,7 @@ version: 2.1
 workflows:
   version: 2
   deploy:
-      jobs:
+    jobs:
       - pantheon/push:
           post-steps:
             - run:

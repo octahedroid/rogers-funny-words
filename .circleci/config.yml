@@ -5,8 +5,7 @@ workflows:
     jobs:
       - pantheon/push:
           post-steps:
-            steps:
-              run: echo "hello"
+            - run: echo "hello"
             # - run:
             #   name: Get pantheon remote hash
             #   command: |

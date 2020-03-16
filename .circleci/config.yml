@@ -11,10 +11,10 @@ workflows:
                 export PANTHEON_REMOTE=$(terminus connection:info $TERMINUS_SITE.dev --field=git_url)
                 export PANTHEON_SHA1=$(git ls-remote $PANTHEON_REMOTE HEAD | awk '{ print $1}')
                 echo "export PANTHEON_SHORT_SHA1='${PANTHEON_SHA1:0:7}'" >> bash_env.txt
-            - persist_to_workspace:
-              root: .
-              paths:
-                - bash_env.txt
+            # - persist_to_workspace:
+            #   root: .
+            #   paths:
+            #     - bash_env.txt
       - playground/npmbuild_and_persist:
           package_lock_location: "frontity"
           path_to_persist: "frontity/build"

@@ -1,6 +1,6 @@
 <?php
 
-require $_ENV['HOME'] . '/code/wp-content/mu-plugins/hacky-proxy/vendor/autoload.php';
+require $_ENV['HOME'] . '/code/wp-content/mu-plugins/wp-hacky-proxy/vendor/autoload.php';
 
 // Create new PantheonToGCPBucket instance
 $hackyproxy = new \Stevector\HackyProxy\PantheonToGCPBucket();
@@ -9,12 +9,15 @@ $hackyproxy = new \Stevector\HackyProxy\PantheonToGCPBucket();
 $hackyproxy
   ->setSite('pantheon-rogers-funny-words') // pantheon site
   ->setEnvironment('dev') // pantheon environment
+  ->setFramework('wordpress') // pantheon framework
+  // ->setHash('b54df3e') // pantheon hash
+  // ->setHashEnabled(false)
   ->setForwards(
     [
       [
         'path' => '/static/',
         'url' => 'http://{site}.static.artifactor.io',
-        'prefix' => '{environment}',
+        'prefix' => '{site}--{environment}',
       ],
       [
         'path' => '/',
@@ -24,4 +27,3 @@ $hackyproxy
     ]
   )
   ->forward();
-

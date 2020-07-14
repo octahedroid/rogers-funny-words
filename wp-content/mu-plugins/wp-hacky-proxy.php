@@ -11,7 +11,7 @@ $hackyproxy
   ->setEnvironment('dev') // pantheon environment
   ->setFramework('wordpress') // pantheon framework
   // ->setHash('b54df3e') // pantheon hash
-  // ->setHashEnabled(false)
+  ->setHashEnabled(true)
   ->setForwards(
     [
       [

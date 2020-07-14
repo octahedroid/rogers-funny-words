@@ -8,7 +8,7 @@ $hackyproxy = new \Stevector\HackyProxy\PantheonToGCPBucket();
 // Set Forward paths
 $hackyproxy
   ->setSite('pantheon-rogers-funny-words') // pantheon site
-  ->setEnvironment('dev') // pantheon environment
+  ->setEnvironment($_ENV['PANTHEON_ENVIRONMENT']) // pantheon environment
   ->setFramework('wordpress') // pantheon framework
   // ->setHash('b54df3e') // pantheon hash
   ->setHashEnabled(true)

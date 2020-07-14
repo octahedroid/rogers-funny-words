@@ -10,7 +10,7 @@ $hackyproxy
   ->setSite('pantheon-rogers-funny-words') // pantheon site
   ->setEnvironment($_ENV['PANTHEON_ENVIRONMENT']) // pantheon environment
   ->setFramework('wordpress') // pantheon framework
-  // ->setHash('b54df3e') // pantheon hash
+  ->setHash($_ENV['PANTHEON_DEPLOYMENT_IDENTIFIER']) // pantheon hash
   ->setHashEnabled(true)
   ->setForwards(
     [

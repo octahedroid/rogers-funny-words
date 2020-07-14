@@ -6,6 +6,7 @@ const cssReset = css`
     border: none;
     margin: 0;
     padding: 0;
+    background: #97b1db;
   }
 
   h1,

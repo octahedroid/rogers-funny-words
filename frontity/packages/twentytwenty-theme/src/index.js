@@ -25,7 +25,7 @@ const twentyTwentyTheme = {
         primary: "#cd2653",
         headerBg: "#ffffff",
         footerBg: "#ffffff",
-        bodyBg: "#f5efe0"
+        bodyBg: "#8cf0ff"
       },
       // Whether to show the search button in page header
       showSearchInHeader: true,

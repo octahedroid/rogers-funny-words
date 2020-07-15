@@ -72,10 +72,6 @@ jobs:
             gcloud functions deploy ${TERMINUS_SITE}--${TERMINUS_ENV}--${PANTHEON_SHORT_SHA1} --project=${GOOGLE_PROJECT_ID} --runtime=nodejs10 --trigger-http  --allow-unauthenticated  --entry-point=default --source=frontity/build --set-env-vars="TERMINUS_SITE=${TERMINUS_SITE},TERMINUS_ENV=${TERMINUS_ENV}"
             gcloud functions deploy ${TERMINUS_SITE}--test--${PANTHEON_SHORT_SHA1} --project=${GOOGLE_PROJECT_ID} --runtime=nodejs10 --trigger-http  --allow-unauthenticated  --entry-point=default --source=frontity/build --set-env-vars="TERMINUS_SITE=${TERMINUS_SITE},TERMINUS_ENV=test"
             gcloud functions deploy ${TERMINUS_SITE}--live--${PANTHEON_SHORT_SHA1} --project=${GOOGLE_PROJECT_ID} --runtime=nodejs10 --trigger-http  --allow-unauthenticated  --entry-point=default --source=frontity/build --set-env-vars="TERMINUS_SITE=${TERMINUS_SITE},TERMINUS_ENV=live"
-            gcloud alpha functions add-iam-policy-binding ${TERMINUS_SITE}--${TERMINUS_ENV} --member=allUsers --role=roles/cloudfunctions.invoker
-            gcloud alpha functions add-iam-policy-binding ${TERMINUS_SITE}--${TERMINUS_ENV}--${PANTHEON_SHORT_SHA1} --member=allUsers --role=roles/cloudfunctions.invoker
-            gcloud alpha functions add-iam-policy-binding ${TERMINUS_SITE}--test--${PANTHEON_SHORT_SHA1} --member=allUsers --role=roles/cloudfunctions.invoker
-            gcloud alpha functions add-iam-policy-binding ${TERMINUS_SITE}--live--${PANTHEON_SHORT_SHA1} --member=allUsers --role=roles/cloudfunctions.invoker
 
   deploy_multidev_static_and_cloud_function:
     docker:

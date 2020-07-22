@@ -21,7 +21,7 @@ steps:
       - managed
       - '--allow-unauthenticated'
       - "--update-env-vars"
-        "TERMINUS_SITE=${_TERMINUS_SITE},TERMINUS_ENV=dev"
+      - "TERMINUS_SITE=${_TERMINUS_SITE},TERMINUS_ENV=dev"
 
 images:
   - gcr.io/$PROJECT_ID/$_TERMINUS_SITE:$COMMIT_SHA

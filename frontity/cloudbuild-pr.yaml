@@ -12,7 +12,7 @@ steps:
     args:
       - run
       - deploy
-      - $_TERMINUS_SITE-pr-$_PR_NUMBER
+      - $_TERMINUS_SITE
       - '--image'
       - gcr.io/$PROJECT_ID/$_TERMINUS_SITE:PR-$_PR_NUMBER
       - '--region'
@@ -23,6 +23,8 @@ steps:
       - '--max-instances'
       - "2"
       - '--no-traffic'
+      - '--revision-suffix'
+      - 'pr-${_PR_NUMBER}'
       - "--update-env-vars"
         "TERMINUS_SITE=${_TERMINUS_SITE},TERMINUS_ENV=pr-${_PR_NUMBER}"
 

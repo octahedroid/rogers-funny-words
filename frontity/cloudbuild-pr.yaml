@@ -26,7 +26,7 @@ steps:
       - '--revision-suffix'
       - 'pr-${_PR_NUMBER}'
       - "--update-env-vars"
-        "TERMINUS_SITE=${_TERMINUS_SITE},TERMINUS_ENV=pr-${_PR_NUMBER}"
+      - "TERMINUS_SITE=${_TERMINUS_SITE},TERMINUS_ENV=pr-${_PR_NUMBER}"
 
 images:
   - gcr.io/$PROJECT_ID/$_TERMINUS_SITE:PR-$_PR_NUMBER

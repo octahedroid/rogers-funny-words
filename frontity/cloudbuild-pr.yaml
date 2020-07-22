@@ -29,6 +29,7 @@ steps:
       - "--update-env-vars"
       - "TERMINUS_SITE=${_TERMINUS_SITE},TERMINUS_ENV=pr-${_PR_NUMBER}"
   
+  # Adding a new revision tag to generate https://pr-#---<TERMINUS_SITE>-<HASH>.a.run.app
   - name: gcr.io/cloud-builders/gcloud
     args: 
       - alpha 

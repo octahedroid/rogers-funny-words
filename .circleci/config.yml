@@ -3,102 +3,99 @@ workflows:
   version: 2
   deploy:
     jobs:
-      - pantheon/push:
-          post-steps:
-            - run: |
-                export PANTHEON_REMOTE=$(terminus connection:info $TERMINUS_SITE.dev --field=git_url)
-                export PANTHEON_SHA1=$(git ls-remote $PANTHEON_REMOTE HEAD | awk '{ print $1}')
-                echo "export PANTHEON_SHORT_SHA1='${PANTHEON_SHA1:0:7}'" >> bash_env.txt
-            - persist_to_workspace:
-                root: .
-                paths:
-                  - bash_env.txt
-      - playground/npmbuild_and_persist:
-          package_lock_location: "frontity"
-          path_to_persist: "frontity/build"
-          build_command: "npm run build"
-          requires:
-            - pantheon/push
-          pre-steps:
-            - playground/setbashenv
-      - deploy_static_and_cloud_function:
-          requires:
-            - playground/npmbuild_and_persist
-          pre-steps:
-            - playground/setbashenv
-          filters:  # required since `deploy` has tag filters AND requires `test`
-            branches:
-              only: master
-      - deploy_multidev_static_and_cloud_function:
-          requires:
-            - playground/npmbuild_and_persist
-          filters:  # required since `deploy` has tag filters AND requires `test`
-            branches:
-              ignore: master
+      - pantheon/push
+      #       - run: |
+      #           export PANTHEON_REMOTE=$(terminus connection:info $TERMINUS_SITE.dev --field=git_url)
+      #           export PANTHEON_SHA1=$(git ls-remote $PANTHEON_REMOTE HEAD | awk '{ print $1}')
+      #           echo "export PANTHEON_SHORT_SHA1='${PANTHEON_SHA1:0:7}'" >> bash_env.txt
+      #       - persist_to_workspace:
+      #           root: .
+      #           paths:
+      #             - bash_env.txt
+      # - playground/npmbuild_and_persist:
+      #     package_lock_location: "frontity"
+      #     path_to_persist: "frontity/build"
+      #     build_command: "npm run build"
+      #     requires:
+      #       - pantheon/push
+      #     pre-steps:
+      #       - playground/setbashenv
+      # - deploy_static_and_cloud_function:
+      #     requires:
+      #       - playground/npmbuild_and_persist
+      #     pre-steps:
+      #       - playground/setbashenv
+      #     filters:  # required since `deploy` has tag filters AND requires `test`
+      #       branches:
+      #         only: master
+      # - deploy_multidev_static_and_cloud_function:
+      #     requires:
+      #       - playground/npmbuild_and_persist
+      #     filters:  # required since `deploy` has tag filters AND requires `test`
+      #       branches:
+      #         ignore: master
 
-jobs:
-  deploy_static_and_cloud_function:
-    docker:
-      - image: google/cloud-sdk:300.0.0-alpine
-    steps:
-      - checkout
-      - attach_workspace:
-          at: .
-      - playground/setbashenv
-      - run:
-          name: Login to gcloud
-          command: |
-            echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
-            gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
-            gcloud --quiet config set compute/zone ${GOOGLE_COMPUTE_ZONE}
-      - run:
-          name: Test short hash
-          command: |
-            echo $PANTHEON_SHORT_SHA1 
-      - run:
-          name: deploy-static
-          # @todo make a variable for serverlessplayground and runtime, and probably everything in gcloud functions deploy.
-          command: |
-            gsutil -m rsync -r -c -d frontity/build/static gs://${GCP_BUCKET}/${TERMINUS_SITE}--${TERMINUS_ENV}/static
-            gsutil -m rsync -r -c -d frontity/build/static gs://${GCP_BUCKET}/${TERMINUS_SITE}--dev--${PANTHEON_SHORT_SHA1}/static
-            gsutil -m rsync -r -c -d frontity/build/static gs://${GCP_BUCKET}/${TERMINUS_SITE}--live--${PANTHEON_SHORT_SHA1}/static
-            gsutil -m rsync -r -c -d frontity/build/static gs://${GCP_BUCKET}/${TERMINUS_SITE}--test--${PANTHEON_SHORT_SHA1}/static
-      - run:
-          name: deploy
-          # @todo make a variable for serverlessplayground and runtime, and probably everything in gcloud functions deploy.
-          command: |
-            rm -rf frontity/build/static
-            gcloud functions deploy ${TERMINUS_SITE}--${TERMINUS_ENV} --project=${GOOGLE_PROJECT_ID} --runtime=nodejs10 --trigger-http  --allow-unauthenticated  --entry-point=default --source=frontity/build --set-env-vars="TERMINUS_SITE=${TERMINUS_SITE},TERMINUS_ENV=${TERMINUS_ENV}"
-            gcloud functions deploy ${TERMINUS_SITE}--${TERMINUS_ENV}--${PANTHEON_SHORT_SHA1} --project=${GOOGLE_PROJECT_ID} --runtime=nodejs10 --trigger-http  --allow-unauthenticated  --entry-point=default --source=frontity/build --set-env-vars="TERMINUS_SITE=${TERMINUS_SITE},TERMINUS_ENV=${TERMINUS_ENV}"
-            gcloud functions deploy ${TERMINUS_SITE}--test--${PANTHEON_SHORT_SHA1} --project=${GOOGLE_PROJECT_ID} --runtime=nodejs10 --trigger-http  --allow-unauthenticated  --entry-point=default --source=frontity/build --set-env-vars="TERMINUS_SITE=${TERMINUS_SITE},TERMINUS_ENV=test"
-            gcloud functions deploy ${TERMINUS_SITE}--live--${PANTHEON_SHORT_SHA1} --project=${GOOGLE_PROJECT_ID} --runtime=nodejs10 --trigger-http  --allow-unauthenticated  --entry-point=default --source=frontity/build --set-env-vars="TERMINUS_SITE=${TERMINUS_SITE},TERMINUS_ENV=live"
+  # deploy_static_and_cloud_function:
+  #   docker:
+  #     - image: google/cloud-sdk:300.0.0-alpine
+  #   steps:
+  #     - checkout
+  #     - attach_workspace:
+  #         at: .
+  #     - playground/setbashenv
+  #     - run:
+  #         name: Login to gcloud
+  #         command: |
+  #           echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
+  #           gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
+  #           gcloud --quiet config set compute/zone ${GOOGLE_COMPUTE_ZONE}
+  #     - run:
+  #         name: Test short hash
+  #         command: |
+  #           echo $PANTHEON_SHORT_SHA1 
+  #     - run:
+  #         name: deploy-static
+  #         # @todo make a variable for serverlessplayground and runtime, and probably everything in gcloud functions deploy.
+  #         command: |
+  #           gsutil -m rsync -r -c -d frontity/build/static gs://${GCP_BUCKET}/${TERMINUS_SITE}--${TERMINUS_ENV}/static
+  #           gsutil -m rsync -r -c -d frontity/build/static gs://${GCP_BUCKET}/${TERMINUS_SITE}--dev--${PANTHEON_SHORT_SHA1}/static
+  #           gsutil -m rsync -r -c -d frontity/build/static gs://${GCP_BUCKET}/${TERMINUS_SITE}--live--${PANTHEON_SHORT_SHA1}/static
+  #           gsutil -m rsync -r -c -d frontity/build/static gs://${GCP_BUCKET}/${TERMINUS_SITE}--test--${PANTHEON_SHORT_SHA1}/static
+  #     - run:
+  #         name: deploy
+  #         # @todo make a variable for serverlessplayground and runtime, and probably everything in gcloud functions deploy.
+  #         command: |
+  #           rm -rf frontity/build/static
+  #           gcloud functions deploy ${TERMINUS_SITE}--${TERMINUS_ENV} --project=${GOOGLE_PROJECT_ID} --runtime=nodejs10 --trigger-http  --allow-unauthenticated  --entry-point=default --source=frontity/build --set-env-vars="TERMINUS_SITE=${TERMINUS_SITE},TERMINUS_ENV=${TERMINUS_ENV}"
+  #           gcloud functions deploy ${TERMINUS_SITE}--${TERMINUS_ENV}--${PANTHEON_SHORT_SHA1} --project=${GOOGLE_PROJECT_ID} --runtime=nodejs10 --trigger-http  --allow-unauthenticated  --entry-point=default --source=frontity/build --set-env-vars="TERMINUS_SITE=${TERMINUS_SITE},TERMINUS_ENV=${TERMINUS_ENV}"
+  #           gcloud functions deploy ${TERMINUS_SITE}--test--${PANTHEON_SHORT_SHA1} --project=${GOOGLE_PROJECT_ID} --runtime=nodejs10 --trigger-http  --allow-unauthenticated  --entry-point=default --source=frontity/build --set-env-vars="TERMINUS_SITE=${TERMINUS_SITE},TERMINUS_ENV=test"
+  #           gcloud functions deploy ${TERMINUS_SITE}--live--${PANTHEON_SHORT_SHA1} --project=${GOOGLE_PROJECT_ID} --runtime=nodejs10 --trigger-http  --allow-unauthenticated  --entry-point=default --source=frontity/build --set-env-vars="TERMINUS_SITE=${TERMINUS_SITE},TERMINUS_ENV=live"
 
-  deploy_multidev_static_and_cloud_function:
-    docker:
-      - image: google/cloud-sdk:300.0.0-alpine
-    steps:
-      - checkout
-      - attach_workspace:
-          at: .
-      - playground/setbashenv
-      - run:
-          name: Login to gcloud
-          command: |
-            echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
-            gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
-            gcloud --quiet config set compute/zone ${GOOGLE_COMPUTE_ZONE}
-      - run:
-          name: deploy-static
-          # @todo make a variable for serverlessplayground and runtime, and probably everything in gcloud functions deploy.
-          command: |
-            gsutil -m rsync -r -c -d frontity/build/static gs://${GCP_BUCKET}/${TERMINUS_SITE}--${TERMINUS_ENV}/static      
-      - run:
-          name: deploy
-          # @todo make a variable for serverlessplayground and runtime, and probably everything in gcloud functions deploy.
-          command: |
-            rm -rf frontity/build/static
-            gcloud functions deploy ${TERMINUS_SITE}--${TERMINUS_ENV} --project=${GOOGLE_PROJECT_ID} --runtime=nodejs10 --trigger-http  --allow-unauthenticated  --entry-point=default --source=frontity/build --set-env-vars="TERMINUS_SITE=${TERMINUS_SITE},TERMINUS_ENV=${TERMINUS_ENV}"
+  # deploy_multidev_static_and_cloud_function:
+  #   docker:
+  #     - image: google/cloud-sdk:300.0.0-alpine
+  #   steps:
+  #     - checkout
+  #     - attach_workspace:
+  #         at: .
+  #     - playground/setbashenv
+  #     - run:
+  #         name: Login to gcloud
+  #         command: |
+  #           echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
+  #           gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
+  #           gcloud --quiet config set compute/zone ${GOOGLE_COMPUTE_ZONE}
+  #     - run:
+  #         name: deploy-static
+  #         # @todo make a variable for serverlessplayground and runtime, and probably everything in gcloud functions deploy.
+  #         command: |
+  #           gsutil -m rsync -r -c -d frontity/build/static gs://${GCP_BUCKET}/${TERMINUS_SITE}--${TERMINUS_ENV}/static      
+  #     - run:
+  #         name: deploy
+  #         # @todo make a variable for serverlessplayground and runtime, and probably everything in gcloud functions deploy.
+  #         command: |
+  #           rm -rf frontity/build/static
+  #           gcloud functions deploy ${TERMINUS_SITE}--${TERMINUS_ENV} --project=${GOOGLE_PROJECT_ID} --runtime=nodejs10 --trigger-http  --allow-unauthenticated  --entry-point=default --source=frontity/build --set-env-vars="TERMINUS_SITE=${TERMINUS_SITE},TERMINUS_ENV=${TERMINUS_ENV}"
 
 orbs:
   pantheon: pantheon-systems/pantheon@0.2.0
-  playground: fauxalgore/playground@0.0.2

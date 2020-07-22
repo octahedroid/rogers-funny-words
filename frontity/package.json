@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "frontity dev",
     "build": "frontity build && cp build/server.js build/index.js",
-    "serve": "frontity serve"
+    "serve": "frontity serve --port=8080"
   },
   "prettier": {},
   "dependencies": {

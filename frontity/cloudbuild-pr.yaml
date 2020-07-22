@@ -28,6 +28,20 @@ steps:
       - 'pr-${_PR_NUMBER}'
       - "--update-env-vars"
       - "TERMINUS_SITE=${_TERMINUS_SITE},TERMINUS_ENV=pr-${_PR_NUMBER}"
+  
+  - name: gcr.io/cloud-builders/gcloud
+    args: 
+      - alpha 
+      - run 
+      - services 
+      - update-traffic 
+      - $_TERMINUS_SITE
+      - --platform
+      - managed 
+      - --region 
+      - us-central1 
+      - --set-tags 
+      - pr-${_PR_NUMBER}=${_TERMINUS_SITE}-pr-${_PR_NUMBER}
 
 images:
   - gcr.io/$PROJECT_ID/$_TERMINUS_SITE:PR-$_PR_NUMBER

@@ -41,6 +41,21 @@ steps:
       - managed 
       - --region 
       - us-central1 
+      - --remove-tags 
+      - pr-${_PR_NUMBER}
+
+  # Adding a new revision tag to generate https://pr-#---<TERMINUS_SITE>-<HASH>.a.run.app
+  - name: gcr.io/cloud-builders/gcloud
+    args: 
+      - alpha 
+      - run 
+      - services 
+      - update-traffic 
+      - $_TERMINUS_SITE
+      - --platform
+      - managed 
+      - --region 
+      - us-central1 
       - --set-tags 
       - pr-${_PR_NUMBER}=${_TERMINUS_SITE}-pr-${_PR_NUMBER}--$SHORT_SHA
 

@@ -25,7 +25,7 @@ steps:
       - "2"
       - '--no-traffic'
       - '--revision-suffix'
-      - 'pr-${_PR_NUMBER}'
+      - 'pr-${_PR_NUMBER}-$COMMIT_SHA'
       - "--update-env-vars"
       - "TERMINUS_SITE=${_TERMINUS_SITE},TERMINUS_ENV=pr-${_PR_NUMBER}"
   
@@ -42,7 +42,7 @@ steps:
       - --region 
       - us-central1 
       - --set-tags 
-      - pr-${_PR_NUMBER}=${_TERMINUS_SITE}-pr-${_PR_NUMBER}
+      - pr-${_PR_NUMBER}=${_TERMINUS_SITE}-pr-${_PR_NUMBER}--$COMMIT_SHA
 
 images:
   - gcr.io/$PROJECT_ID/$_TERMINUS_SITE:pr-$_PR_NUMBER-$COMMIT_SHA

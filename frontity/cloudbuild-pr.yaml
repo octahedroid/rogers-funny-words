@@ -57,7 +57,7 @@ steps:
       - --region 
       - us-central1 
       - --set-tags 
-      - pr-${_PR_NUMBER}=${_TERMINUS_SITE}-pr-${_PR_NUMBER}--$SHORT_SHA
+      - pr-${_PR_NUMBER}=${_TERMINUS_SITE}-pr-${_PR_NUMBER}-$SHORT_SHA
 
 images:
   - gcr.io/$PROJECT_ID/$_TERMINUS_SITE:pr-$_PR_NUMBER-$SHORT_SHA

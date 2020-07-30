@@ -10,19 +10,11 @@ $hackyproxy
   ->setSite('pantheon-rogers-funny-words') // pantheon site
   ->setEnvironment($_ENV['PANTHEON_ENVIRONMENT']) // pantheon environment
   ->setFramework('wordpress') // pantheon framework
-  ->setHash($_ENV['PANTHEON_DEPLOYMENT_IDENTIFIER']) // pantheon hash
-  ->setHashEnabled(true)
   ->setForwards(
     [
       [
-        'path' => '/static/',
-        'url' => 'http://{site}.static.artifactor.io',
-        'prefix' => '{site}--{environment}',
-      ],
-      [
         'path' => '/',
-        'url' => 'https://us-central1-webops-prototypes.cloudfunctions.net',
-        'prefix' => '{site}--{environment}',
+        'url' => 'https://{environment}---{site}-ffqp7tmlta-uc.a.run.app',
       ],
     ]
   )

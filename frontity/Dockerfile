@@ -16,8 +16,8 @@ FROM node:12-alpine
 WORKDIR /app
 
 # Default variables (this change on runtime depending the deployment)
-ENV TERMINUS_ENV=live
-ENV TERMINUS_SITE=pantheon-rogers-funny-words
+ENV BACKEND_ENV=dev
+ENV BACKEND_SITE=pantheon-rogers-funny-words
 
 ENV PORT 8080
 

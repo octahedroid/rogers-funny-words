@@ -14,7 +14,7 @@ $hackyproxy
     [
       [
         'path' => '/',
-        'url' => 'https://{environment}---{site}-ffqp7tmlta-uc.a.run.app',
+        'url' => 'https://{environment}---{site}-5gb3qratfa-uc.a.run.app',
       ],
     ]
   )

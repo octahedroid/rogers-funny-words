@@ -1,5 +1,5 @@
-const env = process.env.TERMINUS_ENV;
-const site = process.env.TERMINUS_SITE;
+const env = process.env.BACKEND_ENV;
+const site = process.env.BACKEND_SITE;
 const url = `https://${env}-${site}.pantheonsite.io`;
 const api = `${url}/wp-json`;
 

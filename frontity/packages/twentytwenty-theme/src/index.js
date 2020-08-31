@@ -1,6 +1,7 @@
 import Theme from "./components";
 import image from "@frontity/html2react/processors/image";
 
+
 const twentyTwentyTheme = {
   name: "@frontity/twentytwenty-theme",
   roots: {
@@ -25,7 +26,7 @@ const twentyTwentyTheme = {
         primary: "#cd2653",
         headerBg: "#ffffff",
         footerBg: "#ffffff",
-        bodyBg: "#ff6d29"
+        bodyBg: "#b18de3"
       },
       // Whether to show the search button in page header
       showSearchInHeader: true,
@@ -83,5 +84,6 @@ const twentyTwentyTheme = {
     }
   }
 };
+
 
 export default twentyTwentyTheme;
